@@ -23,6 +23,7 @@ import {
 } from './auth.js';
 
 import { db } from './firebaseConfig.js';
+import { garantirEstoqueGlobal } from './models/estoqueGlobal.js';
 
 import {
     ref,
@@ -1535,6 +1536,7 @@ async function abrirTurmaDoProfessor(turmaId) {
         for (const id of ['tabDashboard', 'tabMateriais', 'tabMoinho', 'tabHistorico', 'tabPerfil']) {
             document.getElementById(id)?.replaceChildren();
         }
+        await garantirEstoqueGlobal();
         await abrirSistemaNaTurma();
         if (currentUser?.uid === uid && currentUserRole === 'professor') window.showTab('dashboard', true);
     } catch (error) {
@@ -1679,14 +1681,14 @@ function atualizarTurmaInterface() {
 
         nome.textContent =
             currentTurma?.nome ||
-            'Nenhuma turma selecionada';
+            'ESTOQUE GLOBAL';
 
     }
 
     if (codigo) {
 
         const valor = String(currentTurma?.codigo ?? '');
-        codigo.textContent = valor || '------';
+        codigo.textContent = valor || 'GLOBAL';
         if (currentUserRole === 'professor' && valor) {
             const botao = document.createElement('button');
             botao.type = 'button';
@@ -3022,25 +3024,20 @@ async function prepararPosLogin(
         ultimaSessaoPreparada =
             identificadorSessao;
 
-        if (
-            roleFinal ===
-            'professor'
-        ) {
-
+        if (roleFinal === 'professor') {
             garantirAbaTurmasProfessor();
-
             mostrarApp();
-
+            const gate = document.getElementById('turmaGate');
+            if (gate) gate.style.display = 'none';
+            await garantirEstoqueGlobal();
+            atualizarTurmaInterface();
+            await renderDashboard();
+            await renderMateriais();
+            await renderMoinho();
+            await renderHistorico();
+            window.showTab('dashboard', true);
             atualizarVisibilidadeTurmas();
-
-            await renderTurmasPagina();
-
-            window.showTab(
-                'turmas'
-            );
-
             return;
-
         }
 
         if (

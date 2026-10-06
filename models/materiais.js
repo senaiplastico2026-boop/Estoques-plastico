@@ -155,40 +155,14 @@ async function atualizarMoinhoAposAlteracaoMaterial() {
 // CAMINHO DOS MATERIAIS
 // ============================================================
 
-function obterCaminhoMateriais() {
-
-    const turmaId =
-        obterTurmaId();
-
-    if (!turmaId) {
-
-        return null;
-
-    }
-
-    return `turmas/${turmaId}/materiais`;
-
-}
+function obterCaminhoMateriais() { return 'estoqueGlobal/materiais'; }
 
 
 // ============================================================
 // CAMINHO DA LIXEIRA
 // ============================================================
 
-function obterCaminhoLixeira() {
-
-    const turmaId =
-        obterTurmaId();
-
-    if (!turmaId) {
-
-        return null;
-
-    }
-
-    return `turmas/${turmaId}/lixeira_materiais`;
-
-}
+function obterCaminhoLixeira() { return 'estoqueGlobal/lixeira_materiais'; }
 
 
 // ============================================================
@@ -212,15 +186,7 @@ async function getMateriais() {
 
     try {
 
-        const turmaId =
-            obterTurmaId();
-
-
-        if (!turmaId) {
-
-            return [];
-
-        }
+        const turmaId = obterTurmaId() || '';
 
 
         if (
@@ -308,15 +274,7 @@ async function getLixeira() {
 
     try {
 
-        const turmaId =
-            obterTurmaId();
-
-
-        if (!turmaId) {
-
-            return [];
-
-        }
+        const turmaId = obterTurmaId() || '';
 
 
         if (
@@ -407,30 +365,12 @@ async function saveMaterial(
 
     try {
 
-        const turmaId =
-            obterTurmaId();
-
-
-        if (!turmaId) {
-
-            throw new Error(
-                'Nenhuma turma foi selecionada.'
-            );
-
-        }
-
+        const turmaId = obterTurmaId() || '';
 
         const caminho =
             obterCaminhoMateriais();
 
 
-        if (!caminho) {
-
-            throw new Error(
-                'Não foi possível encontrar a turma atual.'
-            );
-
-        }
 
 
         // ========================================================
@@ -452,7 +392,7 @@ async function saveMaterial(
 
                 id,
 
-                turmaId
+                turmaId: turmaId || null
 
             };
 
@@ -591,35 +531,19 @@ async function deleteMaterial(
 
     try {
 
-        const turmaId =
-            obterTurmaId();
-
-
-        if (!turmaId) {
-
-            return {
-
-                success: false,
-
-                error:
-                    'Nenhuma turma foi selecionada.'
-
-            };
-
-        }
-
+        const turmaId = obterTurmaId() || '';
 
         const materialRef =
             ref(
                 db,
-                `turmas/${turmaId}/materiais/${id}`
+                `estoqueGlobal/materiais/${id}`
             );
 
 
         const lixeiraRef =
             ref(
                 db,
-                `turmas/${turmaId}/lixeira_materiais/${id}`
+                `estoqueGlobal/lixeira_materiais/${id}`
             );
 
 
@@ -764,23 +688,7 @@ async function restaurarMaterialHandler(
 
     try {
 
-        const turmaId =
-            obterTurmaId();
-
-
-        if (!turmaId) {
-
-            return {
-
-                success: false,
-
-                error:
-                    'Nenhuma turma foi selecionada.'
-
-            };
-
-        }
-
+        const turmaId = obterTurmaId() || '';
 
         if (
             isOnline &&
@@ -790,7 +698,7 @@ async function restaurarMaterialHandler(
             const lixeiraRef =
                 ref(
                     db,
-                    `turmas/${turmaId}/lixeira_materiais/${id}`
+                    `estoqueGlobal/lixeira_materiais/${id}`
                 );
 
 
@@ -826,7 +734,7 @@ async function restaurarMaterialHandler(
             await set(
                 ref(
                     db,
-                    `turmas/${turmaId}/materiais/${id}`
+                    `estoqueGlobal/materiais/${id}`
                 ),
                 {
 
@@ -941,23 +849,7 @@ async function deletarPermanentemente(
 
     try {
 
-        const turmaId =
-            obterTurmaId();
-
-
-        if (!turmaId) {
-
-            return {
-
-                success: false,
-
-                error:
-                    'Nenhuma turma foi selecionada.'
-
-            };
-
-        }
-
+        const turmaId = obterTurmaId() || '';
 
         if (
             isOnline &&
@@ -967,7 +859,7 @@ async function deletarPermanentemente(
             await remove(
                 ref(
                     db,
-                    `turmas/${turmaId}/lixeira_materiais/${id}`
+                    `estoqueGlobal/lixeira_materiais/${id}`
                 )
             );
 
@@ -1020,40 +912,7 @@ export async function renderMateriais() {
 
     try {
 
-        const turmaId =
-            obterTurmaId();
-
-
-        if (!turmaId) {
-
-            document.getElementById(
-                'tabMateriais'
-            ).innerHTML = `
-
-                <div class="form-card">
-
-                    <div class="form-title">
-
-                        <i class="fas fa-boxes"></i>
-
-                        Materiais
-
-                    </div>
-
-                    <p style="color:#64748b;">
-
-                        Selecione uma turma para
-                        acessar os materiais.
-
-                    </p>
-
-                </div>
-
-            `;
-
-            return;
-
-        }
+        const turmaId = obterTurmaId() || '';
 
 
         const materiaisList =
