@@ -2769,7 +2769,7 @@ loginProfBtn
 
                     await prepararPosLogin(
                         result.user,
-                        result.role
+                        'professor'
                     );
 
                 }
@@ -2881,7 +2881,7 @@ loginAlunoBtn
 
                     await prepararPosLogin(
                         result.user,
-                        result.role
+                        'aluno'
                     );
 
                 }
@@ -2933,6 +2933,7 @@ async function prepararPosLogin(
     const roleFinal =
         role ||
         userExtraInfo?.role ||
+        currentUserRole ||
         null;
 
     if (!roleFinal) {
@@ -4113,6 +4114,9 @@ onAuthStateChange(
 
         if (processandoEstadoAuth) {
 
+            // O login manual prepara a sessão diretamente.
+            // Se o Firebase disparar o evento ao mesmo tempo,
+            // não interrompemos o fluxo nem forçamos recarregamento.
             return;
 
         }
