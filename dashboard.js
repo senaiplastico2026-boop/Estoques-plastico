@@ -71,21 +71,10 @@ async function getData(
 
         }
 
-        const turmaId =
-            obterTurmaAtualId();
-
-        if (!turmaId) {
-
-            console.warn(
-                '⚠️ Nenhuma turma selecionada.'
-            );
-
-            return [];
-
-        }
-
-        const caminho =
-            `turmas/${turmaId}/${collectionName}`;
+        // O estoque é global e não depende de uma turma selecionada.
+        // Cada turma continua existindo separadamente, mas os dados do
+        // Dashboard são sempre lidos do mesmo estoqueGlobal.
+        const caminho = `estoqueGlobal/${collectionName}`;
 
         const snapshot =
             await get(
@@ -157,36 +146,6 @@ export async function renderDashboard() {
 
 
     try {
-
-        // =====================================================
-        // ID DA TURMA
-        // =====================================================
-
-        const turmaId =
-            obterTurmaAtualId();
-
-        if (!turmaId) {
-
-            container.innerHTML = `
-
-                <div class="dashboard-card">
-
-                    <h3>
-                        Nenhuma turma selecionada
-                    </h3>
-
-                    <p>
-                        Selecione uma turma para visualizar o dashboard.
-                    </p>
-
-                </div>
-
-            `;
-
-            return;
-
-        }
-
 
         // =====================================================
         // MATERIAIS
@@ -360,7 +319,7 @@ export async function renderDashboard() {
                     </h2>
 
                     <p>
-                        Aqui está um resumo do gerenciamento de plásticos.
+                        Informações do <strong>Estoque Global</strong>, compartilhadas por todas as turmas.
                     </p>
 
                 </div>

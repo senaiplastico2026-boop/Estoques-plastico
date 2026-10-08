@@ -8,10 +8,12 @@ export function contextoEstoque() {
     if (!turmaId || String(turmaId) !== String(window.senaiTurmaAtualId || '')) throw new Error('Turma inválida. Selecione novamente a turma.');
     if (!auth.currentUser?.uid) throw new Error('Usuário não identificado. Entre novamente.');
     if (!isOnline || navigator.onLine === false) throw new Error('Sem conexão. Reconecte antes de movimentar o estoque.');
-    return { turmaId: String(turmaId), uid: auth.currentUser.uid, executadoPor: {
-        uid: auth.currentUser.uid, nome: userExtraInfo?.nome || auth.currentUser.displayName || auth.currentUser.email || 'Não informado',
-        email: auth.currentUser.email || '', role: userRole || 'Não informado'
-    } };
+    return {
+        turmaId: String(turmaId), uid: auth.currentUser.uid, executadoPor: {
+            uid: auth.currentUser.uid, nome: userExtraInfo?.nome || auth.currentUser.displayName || auth.currentUser.email || 'Não informado',
+            email: auth.currentUser.email || '', role: userRole || 'Não informado'
+        }
+    };
 }
 
 export function conferirContexto(contexto) {
@@ -143,9 +145,11 @@ export async function salvarCadastroMaterial(contexto, dados, id, operacaoId = c
         const minimo = converterParaGramas(dados.estoqueMinimo ?? '0', dados.unidadeMinimo || 'kg', true);
         const atual = turma.materiais?.[materialId];
         if (!novo && !atual) throw new Error('Material inexistente ou removido.');
-        const cadastro = { ...atual, id: materialId, turmaId: contexto.turmaId,
+        const cadastro = {
+            ...atual, id: materialId, turmaId: contexto.turmaId,
             nome: dados.nome, codigo: dados.codigo, categoria: dados.categoria || '', fornecedor: dados.fornecedor || '', estado: dados.estado || 'Bom',
-            estoqueMinimoGramas: minimo, estoqueMinimo: minimo / 1000 };
+            estoqueMinimoGramas: minimo, estoqueMinimo: minimo / 1000
+        };
         if (novo) Object.assign(cadastro, { quantidade: 0, quantidadeGramas: 0, adicionadoPor: contexto.executadoPor.nome, adicionadoPorNome: contexto.executadoPor.nome, adicionadoPorUid: contexto.uid, adicionadoPorPerfil: contexto.executadoPor.role });
         turma.materiais = { ...turma.materiais, [materialId]: cadastro };
         Object.assign(registro, { tipo: 'CADASTRO', origem: 'manual', motivo: novo ? 'Cadastro de material' : 'Edição do cadastro', materialId, materialNome: dados.nome });
@@ -193,7 +197,9 @@ export function salvarMoinhoCompativel(contexto, anterior, proximo) {
         turma.moinho = { ...atual, ...proximo, capacidadeGramas: capacidade };
         const anteriores = Object.values(atual.historico || {});
         const adicionados = Object.values(proximo.historico || {}).slice(anteriores.length);
-        Object.assign(registro, { tipo: 'MOINHO', origem: 'moinho', motivo: adicionados[0]?.acao || 'Edição do moinho', observacao: 'Ação sobre o conteúdo do moinho; sem novo desconto do estoque.',
-            itensMoinhoAntes: Object.values(atual.materiais || {}), itensMoinhoDepois: itens, capacidadeAnteriorGramas: Number(atual.capacidadeMax || 900) * 1000000, capacidadeResultanteGramas: capacidade });
+        Object.assign(registro, {
+            tipo: 'MOINHO', origem: 'moinho', motivo: adicionados[0]?.acao || 'Edição do moinho', observacao: 'Ação sobre o conteúdo do moinho; sem novo desconto do estoque.',
+            itensMoinhoAntes: Object.values(atual.materiais || {}), itensMoinhoDepois: itens, capacidadeAnteriorGramas: Number(atual.capacidadeMax || 900) * 1000000, capacidadeResultanteGramas: capacidade
+        });
     });
 }

@@ -350,7 +350,7 @@ function formatarProfessoresAluno(
 
     const ultimo =
         nomesUnicos[
-            nomesUnicos.length - 1
+        nomesUnicos.length - 1
         ];
 
 
@@ -513,30 +513,29 @@ export async function renderHistorico() {
                         <div class="historico-list">
 
 
-                            ${
-                                ultimosAlunos.length > 0
+                            ${ultimosAlunos.length > 0
 
-                                ?
+                ?
 
-                                ultimosAlunos.map(
-                                    login => {
+                ultimosAlunos.map(
+                    login => {
 
-                                        const nome =
-                                            login.nome ||
-                                            login.email ||
-                                            'Aluno';
+                        const nome =
+                            login.nome ||
+                            login.email ||
+                            'Aluno';
 
-                                        const data =
-                                            login.data ||
-                                            'Data não informada';
+                        const data =
+                            login.data ||
+                            'Data não informada';
 
-                                        const professoresTexto =
-                                            formatarProfessoresAluno(
-                                                login
-                                            );
+                        const professoresTexto =
+                            formatarProfessoresAluno(
+                                login
+                            );
 
 
-                                        return `
+                        return `
 
                                             <div class="log-entry">
 
@@ -569,8 +568,8 @@ export async function renderHistorico() {
                                                         >
 
                                                             ${escapeHTML(
-                                                                professoresTexto
-                                                            )}
+                            professoresTexto
+                        )}
 
                                                         </span>
 
@@ -596,12 +595,12 @@ export async function renderHistorico() {
 
                                         `;
 
-                                    }
-                                ).join('')
+                    }
+                ).join('')
 
-                                :
+                :
 
-                                `
+                `
 
                                     <div class="historico-vazio">
 
@@ -620,7 +619,7 @@ export async function renderHistorico() {
                                     </div>
 
                                 `
-                            }
+            }
 
 
                         </div>
@@ -680,25 +679,24 @@ export async function renderHistorico() {
                         <div class="historico-list">
 
 
-                            ${
-                                ultimosProfessores.length > 0
+                            ${ultimosProfessores.length > 0
 
-                                ?
+                ?
 
-                                ultimosProfessores.map(
-                                    login => {
+                ultimosProfessores.map(
+                    login => {
 
-                                        const nome =
-                                            login.nome ||
-                                            login.email ||
-                                            'Professor';
+                        const nome =
+                            login.nome ||
+                            login.email ||
+                            'Professor';
 
-                                        const data =
-                                            login.data ||
-                                            'Data não informada';
+                        const data =
+                            login.data ||
+                            'Data não informada';
 
 
-                                        return `
+                        return `
 
                                             <div class="log-entry">
 
@@ -749,12 +747,12 @@ export async function renderHistorico() {
 
                                         `;
 
-                                    }
-                                ).join('')
+                    }
+                ).join('')
 
-                                :
+                :
 
-                                `
+                `
 
                                     <div class="historico-vazio">
 
@@ -773,7 +771,7 @@ export async function renderHistorico() {
                                     </div>
 
                                 `
-                            }
+            }
 
 
                         </div>

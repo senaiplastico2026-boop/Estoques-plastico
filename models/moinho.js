@@ -100,23 +100,7 @@ async function getMoinho() {
 
     try {
 
-        const turmaId =
-            obterTurmaId();
-
-
-        if (!turmaId) {
-
-            return {
-
-                materiais: [],
-
-                capacidadeMax: 900,
-
-                historico: []
-
-            };
-
-        }
+        const turmaId = obterTurmaId() || '';
 
 
         if (
@@ -128,7 +112,7 @@ async function getMoinho() {
                 await get(
                     ref(
                         db,
-                        `turmas/${turmaId}/moinho`
+                        `estoqueGlobal/moinho`
                     )
                 );
 
@@ -192,19 +176,7 @@ async function saveMoinho(
 
     try {
 
-        const turmaId =
-            obterTurmaId();
-
-
-        if (!turmaId) {
-
-            console.warn(
-                'Nenhuma turma selecionada para salvar o moinho.'
-            );
-
-            return;
-
-        }
+        const turmaId = obterTurmaId() || '';
 
 
         const dadosMoinho = {
@@ -225,7 +197,7 @@ async function saveMoinho(
             await set(
                 ref(
                     db,
-                    `turmas/${turmaId}/moinho`
+                    `estoqueGlobal/moinho`
                 ),
                 dadosMoinho
             );
@@ -262,40 +234,7 @@ export async function renderMoinho() {
 
     try {
 
-        const turmaId =
-            obterTurmaId();
-
-
-        if (!turmaId) {
-
-            document.getElementById(
-                'tabMoinho'
-            ).innerHTML = `
-
-                <div class="form-card">
-
-                    <div class="form-title">
-
-                        <i class="fas fa-recycle"></i>
-
-                        Moinho
-
-                    </div>
-
-                    <p style="color:#64748b;">
-
-                        Selecione uma turma para acessar
-                        os dados do moinho.
-
-                    </p>
-
-                </div>
-
-            `;
-
-            return;
-
-        }
+        const turmaId = obterTurmaId() || '';
 
 
         const moinhoData =
@@ -376,7 +315,7 @@ export async function renderMoinho() {
                 await get(
                     ref(
                         db,
-                        `turmas/${turmaId}/materiais`
+                        `estoqueGlobal/materiais`
                     )
                 );
 
@@ -732,29 +671,19 @@ export async function renderMoinho() {
                             <div class="form-group">
 
                                 <label>
-                                    Código
-                                </label>
-
-                                <input
-                                    type="text"
-                                    id="newMoinhoCodigo"
-                                    placeholder="R001"
-                                >
-
-                            </div>
-
-
-                            <div class="form-group">
-
-                                <label>
                                     Material
                                 </label>
 
-                                <input
-                                    type="text"
+                                <select
                                     id="newMoinhoMaterial"
-                                    placeholder="Nome"
                                 >
+                                    <option value="">Selecione um material</option>
+                                    ${materiaisDisponiveis.map(m => `
+                                        <option value="${m.id}" data-codigo="${m.codigo || ''}" data-fornecedor="${m.fornecedor || ''}" data-nome="${m.nome || m.material || ''}">
+                                            ${m.codigo || '-'} - ${m.nome || m.material || 'Material'}${m.fornecedor ? ` - ${m.fornecedor}` : ''}
+                                        </option>
+                                    `).join('')}
+                                </select>
 
                             </div>
 
@@ -770,21 +699,7 @@ export async function renderMoinho() {
                                     id="newMoinhoPeso"
                                     step="0.001"
                                     min="0"
-                                >
-
-                            </div>
-
-
-                            <div class="form-group">
-
-                                <label>
-                                    Fornecedor
-                                </label>
-
-                                <input
-                                    type="text"
-                                    id="newMoinhoFornecedor"
-                                    placeholder="Fornecedor"
+                                    placeholder="0.000"
                                 >
 
                             </div>
@@ -1818,24 +1733,11 @@ export async function renderMoinho() {
 
                     try {
 
-                        const codigo =
-                            document
-                                .getElementById(
-                                    'newMoinhoCodigo'
-                                )
-                                ?.value
-                                .trim() ||
-                            '';
-
-
-                        const material =
-                            document
-                                .getElementById(
-                                    'newMoinhoMaterial'
-                                )
-                                ?.value
-                                .trim() ||
-                            '';
+                        const materialSelect = document.getElementById('newMoinhoMaterial');
+                        const materialOption = materialSelect?.selectedOptions?.[0];
+                        const materialId = materialSelect?.value?.trim() || '';
+                        const material = materialOption?.dataset?.nome?.trim() || '';
+                        const codigo = materialOption?.dataset?.codigo?.trim() || '';
 
 
                         const peso =
@@ -1849,16 +1751,10 @@ export async function renderMoinho() {
 
 
                         const fornecedor =
-                            document
-                                .getElementById(
-                                    'newMoinhoFornecedor'
-                                )
-                                ?.value
-                                .trim() ||
-                            '';
+                            materialOption?.dataset?.fornecedor?.trim() || '';
 
 
-                        if (!material) {
+                        if (!materialId || !material) {
 
                             alert(
                                 '⚠️ Informe o material.'
@@ -2030,11 +1926,7 @@ export async function renderMoinho() {
                             .value = '';
 
 
-                        document
-                            .getElementById(
-                                'newMoinhoMaterial'
-                            )
-                            .value = '';
+                        document.getElementById('newMoinhoMaterial').value = '';
 
 
                         document
@@ -2677,7 +2569,7 @@ export async function renderMoinho() {
                         const materialRef =
                             ref(
                                 db,
-                                `turmas/${turmaId}/materiais/${select.value}`
+                                `estoqueGlobal/materiais/${select.value}`
                             );
 
 
